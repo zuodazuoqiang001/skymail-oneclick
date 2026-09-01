@@ -126,7 +126,7 @@ With multiple accounts, add `--account <ACCOUNT_ID>`. Multiple mail domains: `--
 
 1. Check Token permissions
 2. Create or reuse D1 `cloud-mail`, KV `cloud-mail-kv`, R2 `cloud-mail-r2`
-3. Use the bundled [maillab/cloud-mail](https://github.com/maillab/cloud-mail) snapshot (`vendor/cloud-mail`, MIT)
+3. Pull the latest [maillab/cloud-mail](https://github.com/maillab/cloud-mail) from GitHub (mirrors / zip if GitHub is blocked)
 4. Generate `wrangler.toml` (domain list, admin, jwt_secret, custom domain)
 5. `pnpm install` + `wrangler deploy` (including the Vue frontend build)
 6. Bind the custom domain
@@ -162,4 +162,4 @@ This project still uses the official source. It does not maintain a fork. After 
 
 ## License
 
-This repository is MIT. Bundled Cloud Mail source is covered by [NOTICE](NOTICE) and `vendor/cloud-mail/LICENSE`.
+This repository is MIT. At deploy time it clones the latest upstream [maillab/cloud-mail](https://github.com/maillab/cloud-mail) (MIT). This project does not vendor or fork that source.

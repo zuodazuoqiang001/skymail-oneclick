@@ -1,4 +1,5 @@
 work/
+vendor/
 .skymail-state.json
 .skymail-partial.json
 node_modules/

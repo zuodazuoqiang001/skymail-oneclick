@@ -6,7 +6,7 @@ skymail-oneclick is an MIT-licensed local wizard. The GitHub tree is the only of
 
 - Run a local HTTP wizard on `127.0.0.1` only.
 - Call `api.cloudflare.com` with the **User API Token you paste**.
-- Clone or copy Cloud Mail source on this machine and run `wrangler deploy` locally.
+- Clone the latest Cloud Mail source from GitHub on this machine and run `wrangler deploy` locally.
 
 ## What it must not do
 

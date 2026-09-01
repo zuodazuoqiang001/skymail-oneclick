@@ -126,7 +126,7 @@ node deploy.mjs --cli --token <CF_TOKEN> --zone example.com --site mail.example.
 
 1. 检查 Token 权限
 2. 创建或复用 D1 `cloud-mail`、KV `cloud-mail-kv`、R2 `cloud-mail-r2`
-3. 使用内置 [maillab/cloud-mail](https://github.com/maillab/cloud-mail) 快照（`vendor/cloud-mail`，MIT）
+3. 从 GitHub 拉取最新 [maillab/cloud-mail](https://github.com/maillab/cloud-mail)（连不上时走镜像 / zip）
 4. 生成 `wrangler.toml`（域名数组、admin、jwt_secret、自定义域）
 5. `pnpm install` + `wrangler deploy`（含 Vue 前端构建）
 6. 绑定自定义域
@@ -162,4 +162,4 @@ node deploy.mjs --cli --token <CF_TOKEN> --zone example.com --site mail.example.
 
 ## 许可
 
-本仓库 MIT。内置的 Cloud Mail 源码见 [NOTICE](NOTICE) 与 `vendor/cloud-mail/LICENSE`。
+本仓库 MIT。部署时会从上游 [maillab/cloud-mail](https://github.com/maillab/cloud-mail) 克隆最新源码（MIT），不内置、不维护 fork。
