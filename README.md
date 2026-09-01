@@ -154,22 +154,6 @@ node deploy.mjs --cli --token <CF_TOKEN> --zone example.com --site mail.example.
 - Skymail 文档：https://doc.skymail.ink/
 - 仓库：https://github.com/maillab/cloud-mail
 
-## 排查：克隆失败 git exit 128 / curl 56
-
-这是访问 GitHub 被重置，不是 Token 问题。源码已内置在 `vendor/cloud-mail`，**必须关掉旧的 8788 窗口再运行 deploy.cmd**（只刷新网页还是旧进程）。新进程会直接用本地源码，不再连 github.com。
-
-1. 刷新本机向导后再部署。失败时会自动删除本次新建、且 **尚未发布 Worker** 的 D1 / KV / R2。
-2. 若仍克隆失败，给向导进程设置 `HTTPS_PROXY`（和能翻 GitHub 的终端同一代理），再运行 `deploy.cmd`。
-3. 步骤 2 若提示上次失败留下的 D1/KV，点 **立即删除**。
-
-## 排查：验证时报 fetch failed
-
-页面上的 `fetch failed` 几乎都是 **向导进程访问不了 api.cloudflare.com**，不是 Token 写错。
-
-1. 关掉占用 8788 的旧窗口，在资源管理器双击 `deploy.cmd` 重新打开（不要用被限制出网的进程）。
-2. 启动日志里应出现 `Cloudflare API reachable`。若是 `WARNING Cloudflare API unreachable`，再设 `HTTPS_PROXY`。
-3. 浏览器强制刷新 `http://127.0.0.1:8788` 后再点验证。
-
 
 ## 许可
 
