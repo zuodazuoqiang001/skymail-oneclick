@@ -1,6 +1,7 @@
 # Skymail 一键部署
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-v0.1-blue.svg)](https://github.com/zuodazuoqiang001/skymail-oneclick/releases/tag/v0.1)
 
 开源仓库：[zuodazuoqiang001/skymail-oneclick](https://github.com/zuodazuoqiang001/skymail-oneclick)
 
