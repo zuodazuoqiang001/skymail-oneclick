@@ -1,14 +1,18 @@
-# Skymail 一键部署
-
-<p align="center"><img src="web/assets/logo.png" width="96" height="96" alt="Skymail Oneclick" /></p>
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-v0.1-blue.svg)](https://github.com/zuodazuoqiang001/skymail-oneclick/releases/tag/v0.1)
-
-开源仓库：[zuodazuoqiang001/skymail-oneclick](https://github.com/zuodazuoqiang001/skymail-oneclick)
-
-
-把 [Cloud Mail / Skymail](https://doc.skymail.ink/) 部署到 Cloudflare 的本地向导。
+<p align="center">
+    <img src="logo.png" width="80px" alt="Skymail Oneclick" />
+    <h1 align="center">Skymail 一键部署</h1>
+    <p align="center">一键把 Cloud Mail / Skymail 域名邮箱部署到 Cloudflare，含 Email Routing Catch-all 🎉</p>
+    <p align="center">
+        简体中文 | <a href="./README-en.md" style="margin-left: 5px">English</a>
+    </p>
+    <p align="center">
+        <a href="https://github.com/zuodazuoqiang001/skymail-oneclick/issues"><img src="https://img.shields.io/github/issues/zuodazuoqiang001/skymail-oneclick" alt="issues"></a>
+        <a href="https://github.com/zuodazuoqiang001/skymail-oneclick"><img src="https://img.shields.io/github/stars/zuodazuoqiang001/skymail-oneclick" alt="stars"></a>
+        <a href="https://github.com/zuodazuoqiang001/skymail-oneclick"><img src="https://img.shields.io/github/forks/zuodazuoqiang001/skymail-oneclick" alt="forks"></a>
+        <a href="https://github.com/zuodazuoqiang001/skymail-oneclick/blob/main/LICENSE"><img src="https://img.shields.io/github/license/zuodazuoqiang001/skymail-oneclick" alt="license"></a>
+        <a href="https://github.com/zuodazuoqiang001/skymail-oneclick/releases"><img src="https://img.shields.io/github/v/release/zuodazuoqiang001/skymail-oneclick?include_prereleases" alt="release"></a>
+    </p>
+</p>
 
 官方文档的三种方式（GitHub Action、Cloudflare 控制台、Wrangler 命令行）都能上线 Worker，但 **Email Routing、Catch-all 到 Worker、MX、D1/KV/R2、自定义域、`/api/init`** 仍要来回点控制台。Cloudflare 账号内这些操作都有 API，所以这个工具用 **一个 Token** 把它们串成一键流水线。
 
@@ -79,7 +83,6 @@ cd skymail-oneclick
 ```
 
 ## 启动向导
-
 
 在本目录：
 
@@ -156,7 +159,6 @@ node deploy.mjs --cli --token <CF_TOKEN> --zone example.com --site mail.example.
 
 - Skymail 文档：https://doc.skymail.ink/
 - 仓库：https://github.com/maillab/cloud-mail
-
 
 ## 许可
 
