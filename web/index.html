@@ -4,6 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Skymail Oneclick v0.1</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/logo-192.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -41,10 +44,10 @@
     header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 22px; }
     .brand { display: flex; gap: 12px; align-items: center; }
     .mark {
-      width: 44px; height: 44px; border-radius: 14px;
-      background: linear-gradient(160deg, #ffb15a, #f6821f 55%, #c2410c);
-      display: grid; place-items: center; box-shadow: 0 10px 30px rgba(246,130,31,.35);
+      width: 44px; height: 44px; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 10px 30px rgba(246,130,31,.35); flex: none;
     }
+    .mark img { width: 100%; height: 100%; display: block; }
     h1 { font-size: 22px; margin: 0; letter-spacing: -.03em; }
     .sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
     .chip { font-size: 12px; color: #ffd7ad; border: 1px solid var(--line); padding: 6px 10px; border-radius: 999px; background: rgba(246,130,31,.08); }
@@ -120,10 +123,7 @@
     <header>
       <div class="brand">
         <div class="mark">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <path d="M3 7.5 12 3l9 4.5v6.2c0 4.1-3.6 6.8-9 9.3-5.4-2.5-9-5.2-9-9.3V7.5Z" stroke="#1a0e00" stroke-width="1.8"/>
-            <path d="M7 12.2h10M7 9.6h6" stroke="#1a0e00" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
+          <img src="/assets/logo.svg" width="44" height="44" alt="Skymail Oneclick" />
         </div>
         <div>
           <h1>Skymail 一键部署</h1>

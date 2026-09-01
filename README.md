@@ -1,5 +1,7 @@
 # Skymail 一键部署
 
+<p align="center"><img src="web/assets/logo.png" width="96" height="96" alt="Skymail Oneclick" /></p>
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-v0.1-blue.svg)](https://github.com/zuodazuoqiang001/skymail-oneclick/releases/tag/v0.1)
 

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 220" role="img" aria-label="Skymail Oneclick">
+  <defs>
+    <linearGradient id="skymailMarkBg" x1="28" y1="12" x2="188" y2="208" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFB15A"/>
+      <stop offset="0.52" stop-color="#F6821F"/>
+      <stop offset="1" stop-color="#C2410C"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="14" width="192" height="192" rx="54" fill="url(#skymailMarkBg)"/>
+  <g fill="none" stroke="#1A0E00" stroke-width="11" stroke-linejoin="round" stroke-linecap="round" transform="translate(8 14)">
+    <path d="M32 68 L96 34 L160 68 V118 C160 147 134 166 96 184 C58 166 32 147 32 118 Z"/>
+    <path d="M62 103 H134"/>
+    <path d="M62 82 H114"/>
+  </g>
+  <text x="232" y="108" fill="#F3F6FF" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="64" font-weight="700">Skymail</text>
+  <text x="232" y="168" fill="#F6821F" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="36" font-weight="600">Oneclick</text>
+</svg>
