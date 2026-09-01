@@ -1,0 +1,32 @@
+{
+  "name": "skymail-oneclick",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "description": "One-click Cloudflare deploy for Skymail / Cloud Mail, including Email Routing catch-all.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node deploy.mjs",
+    "wizard": "node deploy.mjs",
+    "cli": "node deploy.mjs --cli"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zuodazuoqiang001/skymail-oneclick.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zuodazuoqiang001/skymail-oneclick/issues"
+  },
+  "homepage": "https://github.com/zuodazuoqiang001/skymail-oneclick#readme",
+  "keywords": [
+    "skymail",
+    "cloud-mail",
+    "cloudflare",
+    "email",
+    "workers",
+    "oneclick"
+  ]
+}

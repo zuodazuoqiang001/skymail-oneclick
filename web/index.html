@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skymail Oneclick</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #07090f;
+      --bg2: #10151f;
+      --card: rgba(16, 21, 32, 0.86);
+      --line: rgba(246, 130, 31, 0.22);
+      --ink: #eef3ff;
+      --muted: #93a0b8;
+      --orange: #f6821f;
+      --ok: #3ee0a0;
+      --warn: #ffd166;
+      --bad: #ff6b7a;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: Sora, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 500px at 10% -10%, rgba(246, 130, 31, 0.18), transparent 55%),
+        radial-gradient(900px 400px at 90% 0%, rgba(80, 140, 255, 0.12), transparent 50%),
+        var(--bg);
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0; pointer-events: none; opacity: .18;
+      background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+    .wrap { position: relative; z-index: 1; max-width: 1120px; margin: 0 auto; padding: 28px 20px 80px; }
+    header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 22px; }
+    .brand { display: flex; gap: 12px; align-items: center; }
+    .mark {
+      width: 44px; height: 44px; border-radius: 14px;
+      background: linear-gradient(160deg, #ffb15a, #f6821f 55%, #c2410c);
+      display: grid; place-items: center; box-shadow: 0 10px 30px rgba(246,130,31,.35);
+    }
+    h1 { font-size: 22px; margin: 0; letter-spacing: -.03em; }
+    .sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .chip { font-size: 12px; color: #ffd7ad; border: 1px solid var(--line); padding: 6px 10px; border-radius: 999px; background: rgba(246,130,31,.08); }
+    .grid { display: grid; grid-template-columns: 260px 1fr; gap: 18px; }
+    @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+    .rail, .card {
+      background: var(--card); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 22px; backdrop-filter: blur(16px);
+    }
+    .rail { padding: 18px; height: fit-content; }
+    .step {
+      display: flex; gap: 10px; align-items: center; padding: 10px 8px; border-radius: 12px; color: var(--muted);
+    }
+    .step.on { color: var(--ink); background: rgba(246,130,31,.12); }
+    .n {
+      width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+      font-size: 12px; border: 1px solid rgba(255,255,255,.16);
+    }
+    .step.on .n { background: var(--orange); border-color: var(--orange); color: #1a0e00; font-weight: 700; }
+    .card { padding: 22px; }
+    h2 { margin: 0 0 8px; font-size: 20px; }
+    p.lead { color: var(--muted); font-size: 14px; line-height: 1.6; }
+    label { display: block; font-size: 12px; color: #c9d4ea; margin: 14px 0 6px; }
+    input, textarea, select {
+      width: 100%; border: 1px solid rgba(255,255,255,.1); background: #0b1018; color: var(--ink);
+      border-radius: 12px; padding: 11px 12px; font: 14px Sora, sans-serif;
+    }
+    textarea { min-height: 92px; resize: vertical; font-family: "IBM Plex Mono", monospace; font-size: 12px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 700px) { .row { grid-template-columns: 1fr; } }
+    .btn {
+      border: 0; border-radius: 12px; padding: 11px 16px; font-weight: 650; cursor: pointer;
+      font-family: inherit; background: linear-gradient(180deg, #ffb15a, #f6821f); color: #1a0e00;
+    }
+    .btn.ghost { background: transparent; color: var(--ink); border: 1px solid rgba(255,255,255,.14); }
+    .btn.danger { background: linear-gradient(180deg, #ff8a96, #ff6b7a); color: #2a0004; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+    .zones { display: grid; gap: 8px; max-height: 240px; overflow: auto; padding-right: 4px; }
+    .zone {
+      display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.08); background: #0b1018;
+    }
+    .perms { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; font-size: 13px; color: #c5d0e6; }
+    @media (max-width: 700px) { .perms { grid-template-columns: 1fr; } }
+    .ok { color: var(--ok); } .bad { color: var(--bad); } .warn { color: var(--warn); }
+    .term {
+      margin-top: 14px; background: #070b12; border-radius: 14px; padding: 12px;
+      font: 12px/1.55 "IBM Plex Mono", monospace; min-height: 280px; max-height: 420px; overflow: auto;
+      border: 1px solid rgba(255,255,255,.08); white-space: pre-wrap;
+    }
+    .bar { height: 8px; background: #151b27; border-radius: 99px; overflow: hidden; margin: 10px 0 4px; }
+    .bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #f6821f, #ffd166); }
+    .donebox { display: grid; gap: 10px; }
+    .kv { display: grid; grid-template-columns: 120px 1fr auto; gap: 8px; align-items: center; background: #0b1018; border-radius: 12px; padding: 10px 12px; }
+    a { color: #ffb15a; }
+    .note { font-size: 12px; color: var(--muted); margin-top: 8px; }
+    a.btn { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+    .callout {
+      margin: 14px 0 8px; padding: 12px 14px; border-radius: 14px;
+      border: 1px solid rgba(255,209,102,.28); background: rgba(255,209,102,.08);
+      color: #ffe9b8; font-size: 13px; line-height: 1.55;
+    }
+    .tiny { font-size: 12px; color: var(--muted); line-height: 1.55; margin: 8px 0 0; }
+    .hidden { display: none !important; }
+    .checks { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+    .checks label { display: flex; gap: 8px; align-items: center; margin: 0; font-size: 13px; }
+    .checks input { width: auto; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="mark">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M3 7.5 12 3l9 4.5v6.2c0 4.1-3.6 6.8-9 9.3-5.4-2.5-9-5.2-9-9.3V7.5Z" stroke="#1a0e00" stroke-width="1.8"/>
+            <path d="M7 12.2h10M7 9.6h6" stroke="#1a0e00" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Skymail 一键部署</h1>
+          <div class="sub">Cloud Mail + Cloudflare API · 自动 D1/KV/R2/Worker/自定义域/Email Routing</div>
+        </div>
+      </div>
+      <div class="chip">本地向导 · Token 不离开本机</div>
+    </header>
+    <div class="grid">
+      <aside class="rail" id="rail"></aside>
+      <section class="card">
+        <div id="s1">
+          <h2>1. Cloudflare API Token</h2>
+          <p class="lead">域名必须已经接入 Cloudflare。这里只要<strong>用户 API 令牌</strong>（My Profile → API Tokens）。不要用账户令牌（cfat_ 开头），也不要用 Global API Key。</p>
+          <div class="callout">
+            <b>最快：</b>不要在 Create Custom Token 里一项项勾。已登录 Cloudflare 时，复制下面脚本，到 <b>dash.cloudflare.com</b> 按 F12 → Console → 粘贴回车，会按本项目所需权限直接创建 Token。
+          </div>
+          <label>F12 控制台脚本（在 Cloudflare 控制台运行，不要在本页运行）</label>
+          <textarea id="consoleScript" readonly placeholder="正在加载脚本…"></textarea>
+          <div class="actions" style="margin-top:10px">
+            <button type="button" class="btn" id="btnCopyScript">复制 F12 脚本</button>
+            <a class="btn ghost" id="btnPrefill" target="_blank" rel="noreferrer">或用官方预填链接</a>
+            <button type="button" class="btn ghost" id="btnCopyPrefill">复制预填链接</button>
+          </div>
+          <p class="tiny">脚本成功会把 Token 复制到剪贴板，再粘到本页验证。若被 Cloudflare 拦截，会自动跳转预填页；下拉框看起来是空的也直接点 <b>Continue to summary</b> → <b>Create Token</b>。</p>
+          <div class="perms">
+            <div><b>Account</b><br/>Workers Scripts Edit<br/>Workers KV Edit<br/>D1 Edit<br/>R2 Edit<br/>Account Settings Read</div>
+            <div><b>Zone</b><br/>Zone Read · DNS Edit<br/>Workers Routes Edit<br/>Email Routing Settings/Rules Edit<br/>SSL and Certificates Edit</div>
+          </div>
+          <p class="note">Cloudflare 没有「全选权限」。备选模板：<b>Edit Cloudflare Workers</b>，再手补 Email Routing / DNS / SSL。文档 <a href="https://doc.skymail.ink/" target="_blank" rel="noreferrer">doc.skymail.ink</a></p>
+          <label>API Token</label>
+          <textarea id="token" placeholder="粘贴用户 API Token，不要粘 cfat_ 账户令牌"></textarea>
+          <div class="actions">
+            <button class="btn" id="btnVerify">验证并读取账号/域名</button>
+          </div>
+          <div id="verifyOut" class="note"></div>
+        </div>
+        <div id="s2" class="hidden">
+          <h2>2. 选择域名</h2>
+          <p class="lead">邮箱域名用于 MX / Catch-all。站点域名给 Web 邮箱界面，默认 mail.你的域名，避免占掉官网首页。</p>
+          <div id="orphanBox" class="callout hidden"></div>
+          <label>Cloudflare 账号</label>
+          <select id="account"></select>
+          <label>邮箱域名（可多选）</label>
+          <div class="zones" id="zones"></div>
+          <div class="row">
+            <div>
+              <label>站点域名（自定义域）</label>
+              <input id="site" placeholder="mail.example.com" />
+            </div>
+            <div>
+              <label>管理员邮箱</label>
+              <input id="admin" placeholder="admin@example.com" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>Worker 名称</label>
+              <input id="worker" value="cloud-mail" />
+            </div>
+            <div class="checks">
+              <label><input type="checkbox" id="replaceMx" /> 覆盖已有 MX（接管该域名收信）</label>
+              <label><input type="checkbox" id="enableR2" checked /> 创建 R2（邮件附件）</label>
+            </div>
+          </div>
+          <label>同名资源怎么处理</label>
+          <div class="checks" id="nameStrategyBox">
+            <label><input type="radio" name="nameStrategy" value="reuse" checked /> 复用并升级（推荐：Worker/D1/KV 同名则沿用，邮箱数据保留）</label>
+            <label><input type="radio" name="nameStrategy" value="suffix" /> 自动加后缀（占用则改用 cloud-mail-2，全新一套）</label>
+            <label><input type="radio" name="nameStrategy" value="replace" /> 删除同名后重建（会清空这套邮箱数据）</label>
+          </div>
+          <div id="planBox" class="note"></div>
+          <div class="actions">
+            <button class="btn ghost" id="back1">上一步</button>
+            <button class="btn" id="btnDeploy">开始一键部署</button>
+            <button type="button" class="btn ghost" id="goPurge">清空已部署的邮箱</button>
+          </div>
+        </div>
+        <div id="s3" class="hidden">
+          <h2>3. 正在部署</h2>
+          <p class="lead">首次会克隆官方仓库并构建 Vue 前端，通常需要几分钟。日志在下方，Token 只用于本机调用 Cloudflare API / wrangler。</p>
+          <div class="bar"><i id="bar"></i></div>
+          <div class="note" id="phase">准备中</div>
+          <div class="term" id="term"></div>
+          <div class="actions hidden" id="failActions">
+            <button type="button" class="btn ghost" id="backFail">返回修改</button>
+            <button type="button" class="btn" id="btnCleanupRetry">删除半成品并返回</button>
+          </div>
+        </div>
+        <div id="sPurge" class="hidden">
+          <h2>清空已部署</h2>
+          <p class="lead">输入站点域名（如 mail.example.com）、邮箱域名或 Worker 名称。先预览再确认，默认删除 Worker / D1 / KV / 自定义域，并关闭指向该 Worker 的 Catch-all。不会删除 Cloudflare 账号或 Zone。</p>
+          <label>站点 / 邮箱域名 / Worker 名</label>
+          <input id="purgeQuery" placeholder="mail.example.com 或 example.com 或 cloud-mail" />
+          <div class="actions">
+            <button type="button" class="btn" id="btnPurgePreview">预览将删除的资源</button>
+            <button type="button" class="btn ghost" id="backPurge">返回部署</button>
+          </div>
+          <div id="purgePreview" class="note"></div>
+          <div id="purgeOpts" class="checks hidden">
+            <label><input type="checkbox" id="purgeWorker" checked /> 删除 Worker</label>
+            <label><input type="checkbox" id="purgeDomains" checked /> 解绑自定义域</label>
+            <label><input type="checkbox" id="purgeD1" checked /> 删除 D1（邮箱数据）</label>
+            <label><input type="checkbox" id="purgeKv" checked /> 删除 KV</label>
+            <label><input type="checkbox" id="purgeR2" checked /> 删除 R2</label>
+            <label><input type="checkbox" id="purgeCatch" checked /> 关闭 Catch-all 到该 Worker</label>
+            <label><input type="checkbox" id="purgeMx" /> 删除 Cloudflare Email Routing 的 MX（可能影响该域名收信）</label>
+          </div>
+          <label class="hidden" id="purgeConfirmLabel">输入「清空」确认</label>
+          <input class="hidden" id="purgeConfirm" placeholder="清空" />
+          <div class="actions">
+            <button type="button" class="btn danger hidden" id="btnPurgeGo">确认清空</button>
+          </div>
+          <div class="term hidden" id="purgeTerm"></div>
+        </div>
+        <div id="s4" class="hidden">
+          <h2>4. 完成</h2>
+          <p class="lead" id="doneLead">部署结束。用管理员邮箱在站点里注册第一个账号。</p>
+          <div class="donebox" id="donebox"></div>
+          <div class="actions">
+            <button class="btn ghost" id="again">再部署一次</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <script>
+    const STEPS = ["Token", "域名", "部署", "完成"];
+    const rail = document.getElementById("rail");
+    const views = [s1, s2, s3, s4];
+    let session = { accounts: [], zones: [] };
+    let current = 0;
+
+    function renderRail() {
+      rail.innerHTML = STEPS.map((name, i) => (
+        '<div class="step ' + (i === current ? "on" : "") + '"><div class="n">' + (i + 1) + '</div><div>' + name + '</div></div>'
+      )).join("");
+    }
+    function show(i) {
+      current = i;
+      views.forEach((el, idx) => el.classList.toggle("hidden", idx !== i));
+      if (document.getElementById("sPurge")) sPurge.classList.add("hidden");
+      renderRail();
+    }
+    renderRail();
+
+    const TOKEN_PERMS = [
+      { key: "workers_scripts", type: "edit" },
+      { key: "workers_kv_storage", type: "edit" },
+      { key: "d1", type: "edit" },
+      { key: "workers_r2", type: "edit" },
+      { key: "account_settings", type: "read" },
+      { key: "zone", type: "read" },
+      { key: "dns", type: "edit" },
+      { key: "workers_routes", type: "edit" },
+      { key: "email_routing_rules", type: "edit" },
+      { key: "email_routing_settings", type: "edit" },
+      { key: "ssl_and_certificates", type: "edit" },
+      { key: "zone_settings", type: "edit" }
+    ];
+    function tokenPrefillUrl() {
+      const q = new URLSearchParams({
+        permissionGroupKeys: JSON.stringify(TOKEN_PERMS),
+        accountId: "*",
+        zoneId: "all",
+        name: "Skymail Oneclick"
+      });
+      return "https://dash.cloudflare.com/profile/api-tokens?" + q.toString();
+    }
+    const prefillHref = tokenPrefillUrl();
+    const btnPrefill = document.getElementById("btnPrefill");
+    const btnCopyPrefill = document.getElementById("btnCopyPrefill");
+    const btnCopyScript = document.getElementById("btnCopyScript");
+    const consoleScript = document.getElementById("consoleScript");
+    if (btnPrefill) btnPrefill.href = prefillHref;
+    fetch("/assets/cf-token-console.js?ts=" + Date.now())
+      .then((r) => { if (!r.ok) throw new Error(); return r.text(); })
+      .then((t) => { if (consoleScript) consoleScript.value = t.trim(); })
+      .catch(() => {
+        if (consoleScript) consoleScript.value = "location.href = " + JSON.stringify(prefillHref) + ";";
+      });
+    async function copyText(btn, text, okLabel) {
+      try {
+        await navigator.clipboard.writeText(text);
+        const old = btn.textContent;
+        btn.textContent = okLabel || "已复制";
+        setTimeout(() => { btn.textContent = old; }, 1800);
+      } catch {
+        window.prompt("复制下面的内容", text);
+      }
+    }
+    if (btnCopyPrefill) {
+      btnCopyPrefill.onclick = () => copyText(btnCopyPrefill, prefillHref, "已复制");
+    }
+    if (btnCopyScript) {
+      btnCopyScript.onclick = () => copyText(btnCopyScript, (consoleScript && consoleScript.value.trim()) || "", "已复制，去 CF 控制台粘贴");
+    }
+
+    function setMsg(el, text, cls) {
+      el.className = "note " + (cls || "");
+      el.textContent = text;
+    }
+
+    (async () => {
+      try {
+        const health = await fetch("/api/health").then((r) => r.json());
+        if (!health.version || health.version < 7) {
+          setMsg(verifyOut, "向导进程还是旧代码。请关掉 8788 窗口，重新双击 deploy.cmd（只刷新网页不够）。", "bad");
+          return;
+        }
+        const net = await fetch("/api/netcheck").then((r) => r.json());
+        if (!net.ok) setMsg(verifyOut, "后端现在出不了网： " + (net.error || "fetch failed"), "bad");
+      } catch (e) {
+        setMsg(verifyOut, "连不上本机向导后端，请关掉旧窗口后重新运行 deploy.cmd", "bad");
+      }
+    })();
+
+    btnVerify.onclick = async () => {
+      const token = tokenEl().value.trim();
+      if (!token) return setMsg(verifyOut, "请先粘贴 Token", "bad");
+      setMsg(verifyOut, "正在验证...", "");
+      btnVerify.disabled = true;
+      try {
+        const res = await fetch("/api/session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        });
+        let data = {};
+        try { data = await res.json(); } catch {}
+        if (!res.ok) throw new Error(data.error || ("HTTP " + res.status));
+        session = data;
+        account.innerHTML = (data.accounts || []).map((a) => '<option value="' + a.id + '">' + (a.name || a.id) + '</option>').join("");
+        zones.innerHTML = (data.zones || []).map((z) => (
+          '<label class="zone"><input type="checkbox" value="' + z.id + '" data-name="' + z.name + '" /><div><b>' + z.name + '</b><div class="note">' + (z.status || "") + ' · ' + z.id.slice(0, 8) + '</div></div></label>'
+        )).join("") || '<div class="note">这个 Token 看不到任何 Zone。确认 Zone Read 权限，且域名已接入 CF。</div>';
+        const first = data.zones && data.zones[0];
+        if (first) {
+          site.value = "mail." + first.name;
+          admin.value = "admin@" + first.name;
+        }
+        zones.querySelectorAll("input[type=checkbox]").forEach((box, idx) => {
+          if (idx === 0) box.checked = true;
+          box.addEventListener("change", syncFromZones);
+        });
+        setMsg(verifyOut, "验证成功，账号 " + (data.accounts || []).length + " 个，域名 " + (data.zones || []).length + " 个", "ok");
+        show(1);
+        checkPlan();
+      } catch (e) {
+        const msg = (e.message === "Failed to fetch" || e.message === "fetch failed")
+          ? "连不上本机向导后端。请确认已运行 deploy.cmd，浏览器打开 http://127.0.0.1:8788"
+          : e.message;
+        setMsg(verifyOut, msg, "bad");
+      } finally {
+        btnVerify.disabled = false;
+      }
+    };
+
+    function tokenEl() { return document.getElementById("token"); }
+    function selectedZones() {
+      return [...zones.querySelectorAll("input:checked")].map((el) => ({ id: el.value, name: el.dataset.name }));
+    }
+    function syncFromZones() {
+      const z = selectedZones()[0];
+      if (!z) return;
+      if (!site.value || site.value.startsWith("mail.")) site.value = "mail." + z.name;
+      if (!admin.value || admin.value.startsWith("admin@")) admin.value = "admin@" + z.name;
+    }
+
+    back1.onclick = () => show(0);
+    again.onclick = () => show(1);
+    const goPurge = document.getElementById("goPurge");
+    const backPurge = document.getElementById("backPurge");
+    if (goPurge) goPurge.onclick = () => {
+      views.forEach((el) => el.classList.add("hidden"));
+      sPurge.classList.remove("hidden");
+      if (!purgeQuery.value && site.value) purgeQuery.value = site.value;
+    };
+    if (backPurge) backPurge.onclick = () => show(1);
+
+    function purgeFlags() {
+      return {
+        token: tokenEl().value.trim(),
+        accountId: account.value,
+        query: purgeQuery.value.trim(),
+        deleteWorker: purgeWorker.checked,
+        deleteDomains: purgeDomains.checked,
+        deleteD1: purgeD1.checked,
+        deleteKv: purgeKv.checked,
+        deleteR2: purgeR2.checked,
+        disableCatchAll: purgeCatch.checked,
+        deleteMx: purgeMx.checked
+      };
+    }
+
+    btnPurgePreview.onclick = async () => {
+      purgePreview.textContent = "正在查找…";
+      purgeOpts.classList.add("hidden");
+      btnPurgeGo.classList.add("hidden");
+      purgeConfirm.classList.add("hidden");
+      purgeConfirmLabel.classList.add("hidden");
+      try {
+        const data = await cfPost("/api/purge/preview", { query: purgeQuery.value.trim() });
+        if (!data.foundAny) {
+          purgePreview.textContent = "没有找到 Cloud Mail 资源。可改填 mail.域名、邮箱域名或 Worker 名。";
+          return;
+        }
+        const t = data.targets || {};
+        const lines = [];
+        lines.push("Worker：" + (data.workerName || "-"));
+        if (t.zone) lines.push("Zone：" + t.zone.name);
+        if (t.domains && t.domains.length) lines.push("自定义域：" + t.domains.map((d) => d.hostname).join(", "));
+        const d1s = t.d1s && t.d1s.length ? t.d1s : (t.d1 ? [t.d1] : []);
+        const kvs = t.kvs && t.kvs.length ? t.kvs : (t.kv ? [t.kv] : []);
+        const r2s = t.r2s && t.r2s.length ? t.r2s : (t.r2 ? [t.r2] : []);
+        if (d1s.length) lines.push("D1：" + d1s.map((x) => x.name || x.id).join(", "));
+        if (kvs.length) lines.push("KV：" + kvs.map((x) => x.title || x.id).join(", "));
+        if (r2s.length) lines.push("R2：" + r2s.map((x) => x.name).join(", "));
+        if (t.catchAll) lines.push("Catch-all：" + t.catchAll.zoneName + " -> " + t.catchAll.worker);
+        if (t.mx && t.mx.length) lines.push("CF MX：" + t.mx.length + " 条（需勾选才会删）");
+        purgePreview.innerHTML = lines.map((x) => "<div>" + x + "</div>").join("");
+        purgeOpts.classList.remove("hidden");
+        purgeConfirm.classList.remove("hidden");
+        purgeConfirmLabel.classList.remove("hidden");
+        btnPurgeGo.classList.remove("hidden");
+      } catch (e) {
+        purgePreview.textContent = e.message;
+      }
+    };
+
+    btnPurgeGo.onclick = async () => {
+      if (purgeConfirm.value.trim() !== "清空") return alert("请在确认框输入「清空」");
+      purgeTerm.classList.remove("hidden");
+      purgeTerm.textContent = "";
+      btnPurgeGo.disabled = true;
+      try {
+        const res = await fetch("/api/purge", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(purgeFlags())
+        });
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buf = "";
+        while (true) {
+          const chunk = await reader.read();
+          if (chunk.done) break;
+          buf += decoder.decode(chunk.value, { stream: true });
+          const parts = buf.split("\n\n");
+          buf = parts.pop();
+          for (const part of parts) {
+            const line = part.split("\n").filter((x) => x.startsWith("data:")).map((x) => x.slice(5).trim()).join("");
+            if (!line) continue;
+            let json = null;
+            try { json = JSON.parse(line); } catch { continue; }
+            const msg = (json.step || "purge") + " " + (json.status || "") + "  " + (json.message || json.error || "");
+            if (json.message || json.status) {
+              purgeTerm.textContent += msg.trim() + "\n";
+              purgeTerm.scrollTop = purgeTerm.scrollHeight;
+            }
+            if (json.results) {
+              purgeTerm.textContent += "完成：" + json.results.map((r) => r.label + "=" + r.status).join("；") + "\n";
+            }
+          }
+        }
+      } catch (e) {
+        purgeTerm.textContent += "失败 " + e.message + "\n";
+      } finally {
+        btnPurgeGo.disabled = false;
+      }
+    };
+    if (document.getElementById("account")) account.onchange = () => checkPlan();
+    if (document.getElementById("worker")) worker.onchange = () => checkPlan();
+    document.querySelectorAll('input[name=nameStrategy]').forEach((el) => {
+      el.onchange = () => checkPlan();
+    });
+
+    async function cfPost(path, extra) {
+      const res = await fetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(Object.assign({
+          token: tokenEl().value.trim(),
+          accountId: account.value,
+          workerName: (worker.value || "cloud-mail").trim()
+        }, extra || {}))
+      });
+      let data = {};
+      try { data = await res.json(); } catch {}
+      if (!res.ok) throw new Error(data.error || ("HTTP " + res.status));
+      return data;
+    }
+
+    function resourceLine(found) {
+      const bits = [];
+      if (found && found.d1) bits.push("D1 " + found.d1.name);
+      if (found && found.kv) bits.push("KV " + found.kv.title);
+      if (found && found.r2) bits.push("R2 " + (found.r2.name || found.r2));
+      return bits.join("、") || "无";
+    }
+
+    function selectedStrategy() {
+      const el = document.querySelector('input[name=nameStrategy]:checked');
+      return (el && el.value) || "reuse";
+    }
+
+    async function checkPlan() {
+      const box = document.getElementById("orphanBox");
+      const planBox = document.getElementById("planBox");
+      if (!tokenEl().value.trim() || !account.value) return;
+      if (box) box.classList.add("hidden");
+      if (planBox) planBox.textContent = "正在检查同名 Worker / D1 / KV…";
+      try {
+        const data = await cfPost("/api/plan", { nameStrategy: selectedStrategy() });
+        const hits = (data.hits && data.hits.length) ? data.hits.join("、") : "";
+        if (planBox) {
+          if (data.action === "reuse") planBox.textContent = "将复用：" + hits + "。代码会覆盖，邮箱数据保留。";
+          else if (data.action === "suffix") planBox.textContent = "同名已占用（" + hits + "），将改用 " + data.finalName + "。";
+          else if (data.action === "replace") planBox.textContent = "将删除后重建：" + hits + "。这套邮箱数据会清空。";
+          else planBox.textContent = "未发现同名资源，将新建 " + data.finalName + "。";
+        }
+        if (box && data.exists && data.action !== "replace" && data.found && !data.found.worker && (data.found.d1 || data.found.kv)) {
+          box.classList.remove("hidden");
+          box.innerHTML = "有未发布 Worker 的库：<b>" + resourceLine(data.found) + "</b>。复用策略会沿用它们。<button type='button' class='btn' id='btnCleanupNow' style='margin-left:8px'>改为删除</button>";
+          const btn = document.getElementById("btnCleanupNow");
+          if (btn) btn.onclick = () => cleanupNow(box);
+        }
+      } catch (e) {
+        if (planBox) planBox.textContent = "检查同名资源失败: " + e.message;
+      }
+    }
+
+    async function checkOrphans() { return checkPlan(); }
+
+    async function cleanupNow(box) {
+      const target = box || document.getElementById("orphanBox");
+      try {
+        if (target) target.textContent = "正在删除半成品 D1/KV/R2…";
+        const data = await cfPost("/api/cleanup");
+        const msg = data.workerExists
+          ? "Worker 已存在，已保留绑定资源"
+          : (data.deleted && data.deleted.length ? "已删除 " + data.deleted.join("；") : "没有可删的半成品");
+        if (target) {
+          target.classList.remove("hidden");
+          target.textContent = msg;
+        }
+        appendLog({ step: "rollback", status: "ok", message: msg });
+        return data;
+      } catch (e) {
+        if (target) {
+          target.classList.remove("hidden");
+          target.textContent = "删除失败: " + e.message;
+        }
+        throw e;
+      }
+    }
+
+    const backFail = document.getElementById("backFail");
+    const btnCleanupRetry = document.getElementById("btnCleanupRetry");
+    if (backFail) backFail.onclick = () => { failActions.classList.add("hidden"); show(1); };
+    if (btnCleanupRetry) btnCleanupRetry.onclick = async () => {
+      btnCleanupRetry.disabled = true;
+      try {
+        await cleanupNow();
+        failActions.classList.add("hidden");
+        show(1);
+        checkPlan();
+      } finally {
+        btnCleanupRetry.disabled = false;
+      }
+    };
+
+    btnDeploy.onclick = async () => {
+      const mailDomains = selectedZones();
+      if (!mailDomains.length) return alert("至少选一个邮箱域名");
+      if (!admin.value.includes("@")) return alert("管理员邮箱格式不对");
+      show(2);
+      term.textContent = "";
+      bar.style.width = "4%";
+      phase.textContent = "启动部署流水线";
+      const payload = {
+        token: tokenEl().value.trim(),
+        accountId: account.value,
+        workerName: worker.value.trim() || "cloud-mail",
+        nameStrategy: selectedStrategy(),
+        siteHostname: site.value.trim(),
+        mailDomains,
+        allZones: session.zones,
+        admin: admin.value.trim(),
+        enableR2: enableR2.checked,
+        replaceMx: replaceMx.checked,
+      };
+      const res = await fetch("/api/deploy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = "";
+      let finalResult = null;
+      let lastError = null;
+      while (true) {
+        const chunk = await reader.read();
+        if (chunk.done) break;
+        buf += decoder.decode(chunk.value, { stream: true });
+        const parts = buf.split("\n\n");
+        buf = parts.pop();
+        for (const part of parts) parseSse(part);
+      }
+      if (buf.trim()) parseSse(buf);
+
+      function parseSse(part) {
+        const lines = part.split("\n");
+        let event = "message";
+        let data = "";
+        for (const line of lines) {
+          if (line.startsWith("event:")) event = line.slice(6).trim();
+          if (line.startsWith("data:")) data += line.slice(5).trim();
+        }
+        if (!data) return;
+        let json = null;
+        try { json = JSON.parse(data); } catch { return; }
+        if (event === "log") {
+          appendLog(json);
+          tick(json.step);
+        } else if (event === "done") {
+          finalResult = json;
+        } else if (event === "error") {
+          lastError = json;
+          appendLog({ step: "error", status: "bad", message: json.message });
+        }
+      }
+
+      if (lastError && !finalResult) {
+        phase.textContent = "失败: " + lastError.message;
+        bar.style.width = "100%";
+        failActions.classList.remove("hidden");
+        appendLog({ step: "rollback", status: "log", message: "失败回滚只删除本次新建的库；复用的 D1/KV 会保留。需要清空可点「删除半成品并返回」。" });
+        return;
+      }
+      finish(finalResult || lastError);
+    };
+
+    const ORDER = ["plan","probe","d1","kv","r2","subdomain","clone","toml","install","vue","deploy","domain","email","init","rollback","done"];
+    function tick(step) {
+      const i = Math.max(0, ORDER.indexOf(step));
+      bar.style.width = Math.round(((i + 1) / ORDER.length) * 100) + "%";
+      phase.textContent = step || "";
+    }
+    function appendLog(json) {
+      const line = "[" + (json.step || "-") + "] " + (json.status || "") + "  " + (json.message || "").replace(/\s+$/,"");
+      term.textContent += line + "\n";
+      term.scrollTop = term.scrollHeight;
+    }
+    function finish(result) {
+      show(3);
+      if (!result) {
+        doneLead.textContent = "没有收到完成事件，请看上一步日志。";
+        return;
+      }
+      const siteUrl = result.urls && result.urls.site;
+      const devUrl = result.urls && result.urls.workersDev;
+      const jwt = result.jwtSecret || "";
+      const initHint = result.init && result.init.ok ? "已自动初始化" : "证书未就绪时，稍后打开 /api/init/{jwt}";
+      donebox.innerHTML = [
+        row("站点", siteUrl || "-", siteUrl),
+        row("workers.dev", devUrl || "-", devUrl),
+        row("管理员", result.admin || "-", null),
+        row("邮箱域名", (result.domains || []).join(", "), null),
+        row("初始化", initHint, null),
+        '<label>JWT（请自行保存，用于 /api/init）</label><textarea id="jwtBox" readonly></textarea>',
+        '<div class="note">下一步：打开站点，用管理员邮箱注册第一个账号。源码仍是官方 Cloud Mail。</div>'
+      ].join("");
+      const jwtBox = document.getElementById("jwtBox");
+      if (jwtBox) jwtBox.value = jwt;
+    }
+    function row(k, v, href) {
+      const val = href ? '<a href="' + href + '" target="_blank" rel="noreferrer">' + v + '</a>' : v;
+      return '<div class="kv"><div>' + k + '</div><div>' + val + '</div><div></div></div>';
+    }
+  </script>
+</body>
+</html>

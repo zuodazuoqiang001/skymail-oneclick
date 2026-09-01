@@ -1,0 +1,8 @@
+This repository vendors a snapshot of Cloud Mail (Skymail) so one-click
+deploy works when GitHub is unreachable.
+
+Upstream: https://github.com/maillab/cloud-mail
+License: MIT (see vendor/cloud-mail/LICENSE)
+Copyright (c) 2025 aslost / maillab
+
+Do not treat vendor/cloud-mail as this project's original source.

@@ -1,0 +1,11 @@
+work/
+.skymail-state.json
+.skymail-partial.json
+node_modules/
+_patch.py
+_patch2.py
+_p.cjs
+_page.js
+.DS_Store
+Thumbs.db
+*.log
