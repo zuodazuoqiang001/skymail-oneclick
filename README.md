@@ -20,7 +20,7 @@ Token 只发往 `api.cloudflare.com` 和本机 `wrangler deploy`，不会上传�
 
 ## 你需要提前准备
 
-1. **Node.js 20+**
+1. **Node.js 22+**（Wrangler 4.87+ 要求。低于 22 时向导会自动下载便携 Node 22）
 2. 域名已经接入 Cloudflare（NS 已切过去）
 3. 一个 Cloudflare **用户 API Token**（My Profile → API Tokens）。不要用 Account API Token（`cfat_` 开头），本向导也不支持 Global API Key。
 
@@ -73,7 +73,7 @@ Cloudflare **没有全选权限**。不要在 Create Custom Token 里一项项�
 
 ## 安装
 
-Windows / macOS / Linux 均可（需要 Node.js 20+）：
+Windows / macOS / Linux 均可（需要 Node.js 22+；没有或版本不够时会自动下载便携 Node 22）：
 
 ```bash
 git clone https://github.com/zuodazuoqiang001/skymail-oneclick.git
@@ -126,7 +126,7 @@ node deploy.mjs --cli --token <CF_TOKEN> --zone example.com --site mail.example.
 2. 创建或复用 D1 `cloud-mail`、KV `cloud-mail-kv`、R2 `cloud-mail-r2`
 3. 从 GitHub 拉取最新 [maillab/cloud-mail](https://github.com/maillab/cloud-mail)（连不上时走镜像 / zip）
 4. 生成 `wrangler.toml`（域名数组、admin、jwt_secret、自定义域）
-5. 自动安装 pnpm 与 `mail-worker` / `mail-vue` 依赖，再构建前端并 `wrangler deploy`
+5. 检查 Node 22+（不够则自动升级/下载），自动安装 pnpm 与 `mail-worker` / `mail-vue` 依赖，再构建前端并 `wrangler deploy`
 6. 绑定自定义域
 7. 启用 Email Routing，Catch-all 指向该 Worker
 8. 访问 `/api/init/{jwt}` 初始化数据库

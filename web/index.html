@@ -130,14 +130,15 @@
           <div class="sub">Cloud Mail + Cloudflare API · 自动 D1/KV/R2/Worker/自定义域/Email Routing</div>
         </div>
       </div>
-      <div class="chip">v0.1 · 本地向导 · Token 不离开本机</div>
+      <div class="chip">v0.1 · Node 22+ · Token 不离开本机</div>
     </header>
     <div class="grid">
       <aside class="rail" id="rail"></aside>
       <section class="card">
         <div id="s1">
           <h2>1. Cloudflare API Token</h2>
-          <p class="lead">域名必须已经接入 Cloudflare。这里只要<strong>用户 API 令牌</strong>（My Profile → API Tokens）。不要用账户令牌（cfat_ 开头），也不要用 Global API Key。</p>
+          <p class="lead">域名必须已经接入 Cloudflare。这里只要<strong>用户 API 令牌</strong>（My Profile → API Tokens）。不要用账户令牌（cfat_ 开头），也不要用 Global API Key。Wrangler 需要 <strong>Node.js 22+</strong>，低于 22 时会在部署流程里自动下载便携版。</p>
+          <div id="nodeOut" class="note"></div>
           <div class="callout">
             <b>最快：</b>不要在 Create Custom Token 里一项项勾。已登录 Cloudflare 时，复制下面脚本，到 <b>dash.cloudflare.com</b> 按 F12 → Console → 粘贴回车，会按本项目所需权限直接创建 Token。
           </div>
@@ -204,7 +205,7 @@
         </div>
         <div id="s3" class="hidden">
           <h2>3. 正在部署</h2>
-          <p class="lead">首次会自动安装 pnpm、克隆官方仓库并构建 Vue 前端，通常需要几分钟。日志在下方，Token 只用于本机调用 Cloudflare API / wrangler。</p>
+          <p class="lead">首次会检查 Node 22+（不够就自动下载）、安装 pnpm、克隆官方仓库并构建 Vue 前端，通常需要几分钟。日志在下方，Token 只用于本机调用 Cloudflare API / wrangler。</p>
           <div class="bar"><i id="bar"></i></div>
           <div class="note" id="phase">准备中</div>
           <div class="term" id="term"></div>
@@ -330,9 +331,14 @@
     (async () => {
       try {
         const health = await fetch("/api/health").then((r) => r.json());
-        if (!health.version || health.version < 9) {
+        if (!health.version || health.version < 10) {
           setMsg(verifyOut, "向导进程还是旧代码。请关掉 8788 窗口，重新双击 deploy.cmd（只刷新网页不够）。", "bad");
           return;
+        }
+        const nodeEl = document.getElementById("nodeOut");
+        if (health.node && nodeEl) {
+          if (health.node.ok) setMsg(nodeEl, "当前 Node " + health.node.version + "，满足 Wrangler 所需 22+", "ok");
+          else setMsg(nodeEl, "当前 Node " + health.node.version + " 低于 22，点一键部署时会自动下载 Node 22", "warn");
         }
         const net = await fetch("/api/netcheck").then((r) => r.json());
         if (!net.ok) setMsg(verifyOut, "后端现在出不了网： " + (net.error || "fetch failed"), "bad");
@@ -668,7 +674,7 @@
       finish(finalResult || lastError);
     };
 
-    const ORDER = ["plan","probe","d1","kv","r2","subdomain","clone","toml","install","vue","deploy","domain","email","init","rollback","done"];
+    const ORDER = ["plan","probe","d1","kv","r2","subdomain","clone","toml","node","install","vue","deploy","domain","email","init","rollback","done"];
     function tick(step) {
       const i = Math.max(0, ORDER.indexOf(step));
       bar.style.width = Math.round(((i + 1) / ORDER.length) * 100) + "%";

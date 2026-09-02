@@ -20,7 +20,7 @@ The Token is only sent to `api.cloudflare.com` and local `wrangler deploy`. It i
 
 ## What you need first
 
-1. **Node.js 20+**
+1. **Node.js 22+** (required by Wrangler 4.87+. If older, the wizard downloads a portable Node 22)
 2. A domain already on Cloudflare (nameservers switched)
 3. A Cloudflare **User API Token** (My Profile → API Tokens). Do not use an Account API Token (`cfat_` prefix). This wizard also does not support the Global API Key.
 
@@ -73,7 +73,7 @@ The only true “full permission” credential is the **Global API Key** (email 
 
 ## Install
 
-Windows / macOS / Linux (Node.js 20+):
+Windows / macOS / Linux (Node.js 22+; a portable Node 22 is downloaded if missing or too old):
 
 ```bash
 git clone https://github.com/zuodazuoqiang001/skymail-oneclick.git
@@ -126,7 +126,7 @@ With multiple accounts, add `--account <ACCOUNT_ID>`. Multiple mail domains: `--
 2. Create or reuse D1 `cloud-mail`, KV `cloud-mail-kv`, R2 `cloud-mail-r2`
 3. Pull the latest [maillab/cloud-mail](https://github.com/maillab/cloud-mail) from GitHub (mirrors / zip if GitHub is blocked)
 4. Generate `wrangler.toml` (domain list, admin, jwt_secret, custom domain)
-5. Auto-install pnpm and `mail-worker` / `mail-vue` dependencies, then build the Vue frontend and `wrangler deploy`
+5. Ensure Node 22+ (auto-upgrade/download if needed), auto-install pnpm and `mail-worker` / `mail-vue` dependencies, then build the Vue frontend and `wrangler deploy`
 6. Bind the custom domain
 7. Enable Email Routing, with catch-all pointing at the Worker
 8. Hit `/api/init/{jwt}` to initialize the database

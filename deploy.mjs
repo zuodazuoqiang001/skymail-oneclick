@@ -6,6 +6,7 @@ import { createCf, listAccounts, listZones } from './lib/cf.mjs';
 import { defaultStatePath, deploy, loadState, saveState, sanitizeResult } from './lib/deployer.mjs';
 import { startServer } from './lib/server.mjs';
 import { applyProxyFromEnv, checkCloudflareApi } from './lib/net.mjs';
+import { relaunchIfNeeded } from './lib/node.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = __dirname;
@@ -103,6 +104,7 @@ async function runCli(args) {
 
 async function main() {
   const proxy = applyProxyFromEnv();
+  await relaunchIfNeeded(ROOT, process.argv.slice(2), fileURLToPath(import.meta.url));
   const args = parseArgs(process.argv.slice(2));
   if (args.help) {
     printHelp();
