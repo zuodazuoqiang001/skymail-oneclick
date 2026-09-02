@@ -44,9 +44,7 @@ function printHelp() {
     '      --zone example.com \\',
     '      --site mail.example.com \\',
     '      --admin admin@example.com \\',
-    '      [--worker cloud-mail] [--replace-mx] [--no-r2] [--ci]',
-    '',
-    '  --ci  Mask JWT/token in logs (also auto-enabled on GitHub Actions)',
+    '      [--worker cloud-mail] [--replace-mx] [--no-r2]',
     '',
   ].join('\n');
   process.stdout.write(text);
@@ -59,17 +57,9 @@ function openBrowser(target) {
   else spawn('xdg-open', [target], { detached: true, stdio: 'ignore' });
 }
 
-function ghMask(value) {
-  if (process.env.GITHUB_ACTIONS === 'true' && value) {
-    process.stdout.write('::add-mask::' + String(value) + '\n');
-  }
-}
-
 async function runCli(args) {
   const token = args.token || process.env.CLOUDFLARE_API_TOKEN || '';
   if (!token) throw new Error('Need --token or CLOUDFLARE_API_TOKEN');
-  const ci = Boolean(args.ci || process.env.GITHUB_ACTIONS);
-  ghMask(token);
   const cf = createCf(token);
   const accounts = await listAccounts(cf);
   const zones = await listZones(cf);
@@ -109,8 +99,7 @@ async function runCli(args) {
     }
   );
   saveState(defaultStatePath(ROOT), result);
-  if (ci) ghMask(result.jwtSecret);
-  process.stdout.write('\nDone\n' + JSON.stringify(sanitizeResult(result, { stripSecrets: ci }), null, 2) + '\n');
+  process.stdout.write('\nDone\n' + JSON.stringify(sanitizeResult(result), null, 2) + '\n');
 }
 
 async function main() {

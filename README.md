@@ -135,24 +135,7 @@ node deploy.mjs
 node deploy.mjs --cli --token <CF_TOKEN> --zone example.com --site mail.example.com --admin admin@example.com --replace-mx
 ```
 
-多账号时加 `--account <ACCOUNT_ID>`。多个邮箱域名：`--zone a.com,b.com`。不要 R2：`--no-r2`。CI 日志打码 JWT：`--ci`。
-
-## GitHub Actions（免费，不用本机 Node）
-
-不跑网页向导，在 GitHub 免费 runner 上执行同一条 CLI 流水线（含 Catch-all）。
-
-1. **Fork 本仓库**（Token 加在你自己的仓库，不要提到上游）
-2. Settings → Secrets and variables → Actions → New repository secret
-   - 必填 `CLOUDFLARE_API_TOKEN`（用户 API Token，权限与向导相同；一键预填后仍需手动加 Email Routing 规则）
-   - 多账号时可选 `CLOUDFLARE_ACCOUNT_ID`
-3. 打开 Actions → **Deploy Skymail** → Run workflow
-   - `zone`：已接入 Cloudflare 的邮箱域名
-   - `site` / `admin` 可留空（默认 `mail.<zone>`、`admin@<zone>`）
-   - 该域名已有 MX 时勾选 `replace_mx`
-
-公开仓库日志可见，Action 不会打印 Token 和完整 JWT。成功后用管理员邮箱在站点注册第一个账号。
-
-此方式下 Token 存在 GitHub Secrets，由 runner 发给 Cloudflare，不再是只留本机。
+多账号时加 `--account <ACCOUNT_ID>`。多个邮箱域名：`--zone a.com,b.com`。不要 R2：`--no-r2`。
 
 ## 流水线会做什么
 
