@@ -126,7 +126,7 @@ node deploy.mjs --cli --token <CF_TOKEN> --zone example.com --site mail.example.
 2. 创建或复用 D1 `cloud-mail`、KV `cloud-mail-kv`、R2 `cloud-mail-r2`
 3. 从 GitHub 拉取最新 [maillab/cloud-mail](https://github.com/maillab/cloud-mail)（连不上时走镜像 / zip）
 4. 生成 `wrangler.toml`（域名数组、admin、jwt_secret、自定义域）
-5. `pnpm install` + `wrangler deploy`（含 Vue 前端构建）
+5. 自动安装 pnpm 与 `mail-worker` / `mail-vue` 依赖，再构建前端并 `wrangler deploy`
 6. 绑定自定义域
 7. 启用 Email Routing，Catch-all 指向该 Worker
 8. 访问 `/api/init/{jwt}` 初始化数据库

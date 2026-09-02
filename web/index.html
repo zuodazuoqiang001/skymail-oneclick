@@ -204,7 +204,7 @@
         </div>
         <div id="s3" class="hidden">
           <h2>3. 正在部署</h2>
-          <p class="lead">首次会克隆官方仓库并构建 Vue 前端，通常需要几分钟。日志在下方，Token 只用于本机调用 Cloudflare API / wrangler。</p>
+          <p class="lead">首次会自动安装 pnpm、克隆官方仓库并构建 Vue 前端，通常需要几分钟。日志在下方，Token 只用于本机调用 Cloudflare API / wrangler。</p>
           <div class="bar"><i id="bar"></i></div>
           <div class="note" id="phase">准备中</div>
           <div class="term" id="term"></div>
@@ -330,7 +330,7 @@
     (async () => {
       try {
         const health = await fetch("/api/health").then((r) => r.json());
-        if (!health.version || health.version < 8) {
+        if (!health.version || health.version < 9) {
           setMsg(verifyOut, "向导进程还是旧代码。请关掉 8788 窗口，重新双击 deploy.cmd（只刷新网页不够）。", "bad");
           return;
         }

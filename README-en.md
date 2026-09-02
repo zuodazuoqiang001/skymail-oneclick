@@ -126,7 +126,7 @@ With multiple accounts, add `--account <ACCOUNT_ID>`. Multiple mail domains: `--
 2. Create or reuse D1 `cloud-mail`, KV `cloud-mail-kv`, R2 `cloud-mail-r2`
 3. Pull the latest [maillab/cloud-mail](https://github.com/maillab/cloud-mail) from GitHub (mirrors / zip if GitHub is blocked)
 4. Generate `wrangler.toml` (domain list, admin, jwt_secret, custom domain)
-5. `pnpm install` + `wrangler deploy` (including the Vue frontend build)
+5. Auto-install pnpm and `mail-worker` / `mail-vue` dependencies, then build the Vue frontend and `wrangler deploy`
 6. Bind the custom domain
 7. Enable Email Routing, with catch-all pointing at the Worker
 8. Hit `/api/init/{jwt}` to initialize the database
