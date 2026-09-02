@@ -165,6 +165,7 @@
         <div id="s2" class="hidden">
           <h2>2. 选择域名</h2>
           <p class="lead">邮箱域名用于 MX / Catch-all。站点域名给 Web 邮箱界面，默认 mail.你的域名，避免占掉官网首页。</p>
+          <div id="emailPermBox" class="callout hidden"></div>
           <div id="orphanBox" class="callout hidden"></div>
           <label>Cloudflare 账号</label>
           <select id="account"></select>
@@ -332,7 +333,7 @@
     (async () => {
       try {
         const health = await fetch("/api/health").then((r) => r.json());
-        if (!health.version || health.version < 11) {
+        if (!health.version || health.version < 12) {
           setMsg(verifyOut, "向导进程还是旧代码。请关掉 8788 窗口，重新双击 deploy.cmd（只刷新网页不够）。", "bad");
           return;
         }
@@ -376,7 +377,14 @@
           if (idx === 0) box.checked = true;
           box.addEventListener("change", syncFromZones);
         });
-        setMsg(verifyOut, "验证成功，账号 " + (data.accounts || []).length + " 个，域名 " + (data.zones || []).length + " 个", "ok");
+        const nAcc = (data.accounts || []).length;
+        const nZone = (data.zones || []).length;
+        if (data.emailRules && data.emailRules.ok === false) {
+          setMsg(verifyOut, "Token 能读账号/域名，但缺少 Zone「Email Routing Rules Edit」。站点仍可一键部署；收信 Catch-all 请用 F12 脚本重建 Token，或部署后到 Cloudflare Email Routing 手动指定 Worker。", "warn");
+        } else {
+          setMsg(verifyOut, "验证成功，账号 " + nAcc + " 个，域名 " + nZone + " 个", "ok");
+        }
+        showEmailPermWarn(data.emailRules);
         show(1);
         checkPlan();
       } catch (e) {
@@ -389,6 +397,17 @@
       }
     };
 
+    function showEmailPermWarn(emailRules) {
+      const box = document.getElementById("emailPermBox");
+      if (!box) return;
+      if (emailRules && emailRules.ok === false) {
+        box.classList.remove("hidden");
+        box.innerHTML = "<b>Token 缺 Email Routing Rules Edit</b><br/>不会中断部署。Worker / 站点仍会发布，但 Catch-all 写不进 API。请用第一步 F12 脚本或预填链接重建用户 Token，或部署完成后到 Cloudflare 控制台 Email Routing → Routing rules 手动指到 Worker。";
+      } else {
+        box.classList.add("hidden");
+        box.textContent = "";
+      }
+    }
     function tokenEl() { return document.getElementById("token"); }
     function selectedZones() {
       return [...zones.querySelectorAll("input:checked")].map((el) => ({ id: el.value, name: el.dataset.name }));
