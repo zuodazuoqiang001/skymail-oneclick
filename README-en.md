@@ -28,9 +28,25 @@ Cloudflare **has no “all permissions” custom token**. The fastest way is the
 
 In step 1 of the wizard, click **Prefill required permissions**, or open [Cloudflare: auto-create the Skymail deploy token](https://dash.cloudflare.com/profile/api-tokens?permissionGroupKeys=%5B%7B%22key%22%3A%22workers_scripts%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_kv_storage%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22d1%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_r2%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22account_settings%22%2C%22type%22%3A%22read%22%7D%2C%7B%22key%22%3A%22email_routing_addresses%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22zone%22%2C%22type%22%3A%22read%22%7D%2C%7B%22key%22%3A%22dns%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_routes%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22email_routing_rules%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22email_routing_settings%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22ssl_and_certificates%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22zone_settings%22%2C%22type%22%3A%22edit%22%7D%5D&accountId=*&zoneId=all&name=Skymail%20Oneclick).
 
-If the dropdowns look empty after opening it, click **Continue to summary** → **Create Token**. That is a Cloudflare dashboard rendering bug; the permissions are complete on the summary page.
+If the dropdowns look empty after opening it, that is a Cloudflare dashboard rendering issue. Workers / DNS / SSL are usually already selected. **Email Routing is not auto-checked**: Cloudflare's prefill short-key whitelist does not include it, so those keys in the URL are dropped silently.
 
-Required permissions:
+### Permissions you still add by hand after the prefill link
+
+On the Create Token page, click **+ Add more**, add the three rows below, then check the summary:
+
+| Scope | Permission | Level | Required |
+| --- | --- | --- | --- |
+| Zone | Email Routing Rules | Edit | **Required**. Catch-all cannot be configured without it |
+| Zone | Email Routing Settings | Edit | Recommended |
+| Account | Email Routing Addresses | Edit | Recommended |
+
+![Manually add Email Routing after the prefill link](docs/cf-token-manual-email-routing.png)
+
+The red box is what you add by hand after the prefill: Account **Email Routing Addresses** Edit, and Zone **Email Routing Rules** Edit. Rules is required for catch-all. Also add Zone **Email Routing Settings** if it is missing.
+
+The summary must show **Email Routing Rules · Edit** before **Continue to summary** → **Create Token**. Existing tokens cannot change permissions; create a new one if this is missing.
+
+Full permission list (prefilled items plus the manual Email Routing rows):
 
 **Account**
 - Workers Scripts: Edit
@@ -68,7 +84,7 @@ The script uses your current dashboard session to call `/api/v4/user/tokens`. It
 
 ### Method B: Official prefilled link
 
-Open [Cloudflare: auto-create the Skymail deploy token](https://dash.cloudflare.com/profile/api-tokens?permissionGroupKeys=%5B%7B%22key%22%3A%22workers_scripts%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_kv_storage%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22d1%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_r2%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22account_settings%22%2C%22type%22%3A%22read%22%7D%2C%7B%22key%22%3A%22email_routing_addresses%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22zone%22%2C%22type%22%3A%22read%22%7D%2C%7B%22key%22%3A%22dns%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_routes%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22email_routing_rules%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22email_routing_settings%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22ssl_and_certificates%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22zone_settings%22%2C%22type%22%3A%22edit%22%7D%5D&accountId=*&zoneId=all&name=Skymail%20Oneclick). Empty dropdowns are fine — Continue to summary → Create Token.
+Open [Cloudflare: auto-create the Skymail deploy token](https://dash.cloudflare.com/profile/api-tokens?permissionGroupKeys=%5B%7B%22key%22%3A%22workers_scripts%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_kv_storage%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22d1%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_r2%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22account_settings%22%2C%22type%22%3A%22read%22%7D%2C%7B%22key%22%3A%22email_routing_addresses%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22zone%22%2C%22type%22%3A%22read%22%7D%2C%7B%22key%22%3A%22dns%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_routes%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22email_routing_rules%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22email_routing_settings%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22ssl_and_certificates%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22zone_settings%22%2C%22type%22%3A%22edit%22%7D%5D&accountId=*&zoneId=all&name=Skymail%20Oneclick). Workers / DNS / SSL are prefilled; **still add Email Routing by hand using the table above**. Empty dropdowns are fine. Continue to summary → Create Token only after the summary shows **Email Routing Rules · Edit**.
 
 The only true “full permission” credential is the **Global API Key** (email + `X-Auth-Key`). It is high risk, and this wizard does not use it.
 

@@ -28,9 +28,25 @@ Cloudflare **没有「全部权限」自定义 Token**。最快创建方式是�
 
 在向导第一步点 **一键预填所需权限**，或点击 [Cloudflare 自动创建 Skymail 部署所需 Token](https://dash.cloudflare.com/profile/api-tokens?permissionGroupKeys=%5B%7B%22key%22%3A%22workers_scripts%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_kv_storage%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22d1%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_r2%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22account_settings%22%2C%22type%22%3A%22read%22%7D%2C%7B%22key%22%3A%22email_routing_addresses%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22zone%22%2C%22type%22%3A%22read%22%7D%2C%7B%22key%22%3A%22dns%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_routes%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22email_routing_rules%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22email_routing_settings%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22ssl_and_certificates%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22zone_settings%22%2C%22type%22%3A%22edit%22%7D%5D&accountId=*&zoneId=all&name=Skymail%20Oneclick)
 
-打开后如果下拉框看起来是空的，直接点 **Continue to summary** → **Create Token**。这是 Cloudflare 控制台的渲染 bug，权限在摘要页是齐的。
+打开后如果下拉框看起来是空的，这是 Cloudflare 控制台的渲染问题，Workers / DNS / SSL 等一般已经勾上。**但 Email Routing 不会被自动勾上**：官方预填短 key 白名单里没有这项，链接里写了也会被静默丢掉。
 
-需要的权限：
+### 一键授权后还要手动加的权限
+
+在创建 Token 页点 **+ 添加更多**，补齐下面三项，再看摘要：
+
+| 范围 | 权限 | 级别 | 是否必须 |
+| --- | --- | --- | --- |
+| Zone | Email Routing 规则（Email Routing Rules） | Edit | **必须**。没有它就不能自动配 Catch-all |
+| Zone | Email Routing 设置（Email Routing Settings） | Edit | 建议 |
+| Account | Email Routing 地址（Email Routing Addresses） | Edit | 建议 |
+
+![一键授权后手动添加 Email Routing](docs/cf-token-manual-email-routing.png)
+
+红框是一键授权后要手动加的两项：账户「电子邮件路由地址」编辑、区域「电子邮件路由规则」编辑。规则是 Catch-all 必需。区域「电子邮件路由设置」建议一并加上。
+
+摘要页必须出现 **Email Routing 规则 · 编辑**，再点 **Continue to summary** → **Create Token**。旧 Token 不能改权限，缺了就新建。
+
+完整权限清单（预填已带 + 上面手动补齐）：
 
 **Account**
 - Workers Scripts: Edit
@@ -68,7 +84,7 @@ Cloudflare **没有全选权限**。不要在 Create Custom Token 里一项项�
 
 ### 方法 B：官方预填链接
 
-点击 [Cloudflare 自动创建 Skymail 部署所需 Token](https://dash.cloudflare.com/profile/api-tokens?permissionGroupKeys=%5B%7B%22key%22%3A%22workers_scripts%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_kv_storage%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22d1%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_r2%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22account_settings%22%2C%22type%22%3A%22read%22%7D%2C%7B%22key%22%3A%22email_routing_addresses%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22zone%22%2C%22type%22%3A%22read%22%7D%2C%7B%22key%22%3A%22dns%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_routes%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22email_routing_rules%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22email_routing_settings%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22ssl_and_certificates%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22zone_settings%22%2C%22type%22%3A%22edit%22%7D%5D&accountId=*&zoneId=all&name=Skymail%20Oneclick)。下拉框空着也没关系，点 Continue to summary → Create Token。
+点击 [Cloudflare 自动创建 Skymail 部署所需 Token](https://dash.cloudflare.com/profile/api-tokens?permissionGroupKeys=%5B%7B%22key%22%3A%22workers_scripts%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_kv_storage%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22d1%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_r2%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22account_settings%22%2C%22type%22%3A%22read%22%7D%2C%7B%22key%22%3A%22email_routing_addresses%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22zone%22%2C%22type%22%3A%22read%22%7D%2C%7B%22key%22%3A%22dns%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_routes%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22email_routing_rules%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22email_routing_settings%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22ssl_and_certificates%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22zone_settings%22%2C%22type%22%3A%22edit%22%7D%5D&accountId=*&zoneId=all&name=Skymail%20Oneclick)。Workers / DNS / SSL 等会预填好，**还要按上面表格手动加 Email Routing**。下拉框空着没关系，摘要出现 **Email Routing 规则 · 编辑** 后再 Continue to summary → Create Token。
 
 唯一真正「全权限」的是 **Global API Key**（邮箱 + `X-Auth-Key`），风险大，本向导不用它。
 
