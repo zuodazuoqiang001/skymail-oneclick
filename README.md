@@ -175,6 +175,10 @@ node deploy.mjs --cli --token <CF_TOKEN> --zone example.com --site mail.example.
 - Skymail 文档：https://doc.skymail.ink/
 - 仓库：https://github.com/maillab/cloud-mail
 
+## 社区
+
+- 友链：[LINUX DO](https://linux.do)
+
 ## 许可
 
 本仓库 MIT。部署时会从上游 [maillab/cloud-mail](https://github.com/maillab/cloud-mail) 克隆最新源码（MIT），不内置、不维护 fork。

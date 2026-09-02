@@ -175,6 +175,10 @@ This project still uses the official source. It does not maintain a fork. After 
 - Skymail docs: https://doc.skymail.ink/
 - Upstream repo: https://github.com/maillab/cloud-mail
 
+## Community
+
+- Friend link: [LINUX DO](https://linux.do)
+
 ## License
 
 This repository is MIT. At deploy time it clones the latest upstream [maillab/cloud-mail](https://github.com/maillab/cloud-mail) (MIT). This project does not vendor or fork that source.
