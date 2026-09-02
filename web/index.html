@@ -333,7 +333,7 @@
     (async () => {
       try {
         const health = await fetch("/api/health").then((r) => r.json());
-        if (!health.version || health.version < 12) {
+        if (!health.version || health.version < 13) {
           setMsg(verifyOut, "向导进程还是旧代码。请关掉 8788 窗口，重新双击 deploy.cmd（只刷新网页不够）。", "bad");
           return;
         }
