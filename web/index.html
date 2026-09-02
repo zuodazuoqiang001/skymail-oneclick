@@ -151,8 +151,8 @@
           </div>
           <p class="tiny">脚本成功会把 Token 复制到剪贴板，再粘到本页验证。若被 Cloudflare 拦截，会自动跳转预填页；下拉框看起来是空的也直接点 <b>Continue to summary</b> → <b>Create Token</b>。</p>
           <div class="perms">
-            <div><b>Account</b><br/>Workers Scripts Edit<br/>Workers KV Edit<br/>D1 Edit<br/>R2 Edit<br/>Account Settings Read</div>
-            <div><b>Zone</b><br/>Zone Read · DNS Edit<br/>Workers Routes Edit<br/>Email Routing Settings/Rules Edit<br/>SSL and Certificates Edit</div>
+            <div><b>Account</b><br/>Workers Scripts Edit<br/>Workers KV Edit<br/>D1 Edit<br/>R2 Edit<br/>Account Settings Read<br/>Email Routing Addresses Edit</div>
+            <div><b>Zone</b><br/>Zone Read · DNS Edit<br/>Workers Routes Edit<br/>Email Routing Settings/Rules Edit（Catch-all 必需）<br/>SSL and Certificates Edit</div>
           </div>
           <p class="note">Cloudflare 没有「全选权限」。备选模板：<b>Edit Cloudflare Workers</b>，再手补 Email Routing / DNS / SSL。文档 <a href="https://doc.skymail.ink/" target="_blank" rel="noreferrer">doc.skymail.ink</a></p>
           <label>API Token</label>
@@ -277,6 +277,7 @@
       { key: "d1", type: "edit" },
       { key: "workers_r2", type: "edit" },
       { key: "account_settings", type: "read" },
+      { key: "email_routing_addresses", type: "edit" },
       { key: "zone", type: "read" },
       { key: "dns", type: "edit" },
       { key: "workers_routes", type: "edit" },
@@ -331,7 +332,7 @@
     (async () => {
       try {
         const health = await fetch("/api/health").then((r) => r.json());
-        if (!health.version || health.version < 10) {
+        if (!health.version || health.version < 11) {
           setMsg(verifyOut, "向导进程还是旧代码。请关掉 8788 窗口，重新双击 deploy.cmd（只刷新网页不够）。", "bad");
           return;
         }
@@ -668,7 +669,7 @@
         phase.textContent = "失败: " + lastError.message;
         bar.style.width = "100%";
         failActions.classList.remove("hidden");
-        appendLog({ step: "rollback", status: "log", message: "失败回滚只删除本次新建的库；复用的 D1/KV 会保留。需要清空可点「删除半成品并返回」。" });
+        appendLog({ step: "rollback", status: "log", message: "Worker 发布前的失败只会删本次新建的 D1/KV；发布后不再回滚存储。Catch-all 失败请重建带 Email Routing Rules Edit 的用户 Token，或到控制台手动指定 Worker。" });
         return;
       }
       finish(finalResult || lastError);
@@ -695,12 +696,30 @@
       const devUrl = result.urls && result.urls.workersDev;
       const jwt = result.jwtSecret || "";
       const initHint = result.init && result.init.ok ? "已自动初始化" : "证书未就绪时，稍后打开 /api/init/{jwt}";
+      const warnings = result.warnings || [];
+      const emailRouting = result.emailRouting || [];
+      doneLead.textContent = warnings.length
+        ? "部署完成，但 Catch-all 需要确认。用管理员邮箱在站点里注册第一个账号。"
+        : "部署结束。用管理员邮箱在站点里注册第一个账号。";
+      const emailRows = emailRouting.map((er) => {
+        const name = (er.zone && er.zone.name) || "Catch-all";
+        if (er.ok) return row("Catch-all " + name, "已指向 Worker", er.dashboard || null);
+        return row("Catch-all " + name, "需手动设置", er.dashboard || null);
+      });
+      const warnHtml = warnings.length
+        ? '<div class="callout">' + warnings.map((w) => {
+            const link = w.dashboard ? ' <a href="' + w.dashboard + '" target="_blank" rel="noreferrer">打开 Email Routing</a>' : "";
+            return "<div>" + (w.message || "") + link + "</div>";
+          }).join("") + "</div>"
+        : "";
       donebox.innerHTML = [
         row("站点", siteUrl || "-", siteUrl),
         row("workers.dev", devUrl || "-", devUrl),
         row("管理员", result.admin || "-", null),
         row("邮箱域名", (result.domains || []).join(", "), null),
+        ...emailRows,
         row("初始化", initHint, null),
+        warnHtml,
         '<label>JWT（请自行保存，用于 /api/init）</label><textarea id="jwtBox" readonly></textarea>',
         '<div class="note">下一步：打开站点，用管理员邮箱注册第一个账号。源码仍是官方 Cloud Mail。</div>'
       ].join("");

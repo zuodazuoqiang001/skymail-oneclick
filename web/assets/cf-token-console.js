@@ -10,6 +10,7 @@
     { key: "d1", type: "edit" },
     { key: "workers_r2", type: "edit" },
     { key: "account_settings", type: "read" },
+    { key: "email_routing_addresses", type: "edit" },
     { key: "zone", type: "read" },
     { key: "dns", type: "edit" },
     { key: "workers_routes", type: "edit" },
@@ -133,14 +134,16 @@
     ["D1 Write", ["d1 write", "d1 edit", "workers d1 write"]],
     ["Workers R2 Storage Write", ["workers r2 storage write", "workers r2 storage edit", "workers r2 write", "r2 write"]],
     ["Account Settings Read", ["account settings read"]],
+    ["Email Routing Addresses Write", ["email routing addresses write", "email routing addresses edit", "account email routing addresses write", "email routing destination addresses write"]],
     ["Zone Read", ["zone read"]],
     ["DNS Write", ["dns write", "dns edit", "zone dns write"]],
     ["Workers Routes Write", ["workers routes write", "workers routes edit"]],
-    ["Email Routing Rules Write", ["email routing rules write", "email routing rules edit"]],
-    ["Email Routing Settings Write", ["email routing settings write", "email routing settings edit"]],
+    ["Email Routing Rules Write", ["email routing rules write", "email routing rules edit", "zone email routing rules write", "email routing rule write"]],
+    ["Email Routing Settings Write", ["email routing settings write", "email routing settings edit", "zone email routing settings write"]],
     ["SSL and Certificates Write", ["ssl and certificates write", "ssl and certificates edit"]],
     ["Zone Settings Write", ["zone settings write", "zone settings edit"]]
   ];
+  const REQUIRED = ["Workers Scripts Write", "Workers KV Storage Write", "D1 Write", "DNS Write", "Email Routing Rules Write"];
 
   function goPrefill(reason) {
     log(reason || "改用官方预填链接");
@@ -195,6 +198,12 @@
     }
 
     if (!picked.length) throw new Error("没有匹配到权限组");
+
+    var missingRequired = missing.filter(function (x) { return REQUIRED.indexOf(x) >= 0; });
+    if (missingRequired.length) {
+      goPrefill("缺少关键权限（不会生成残缺 Token）：" + missingRequired.join(", "));
+      return;
+    }
 
     var buckets = {};
     for (var p = 0; p < picked.length; p++) {
