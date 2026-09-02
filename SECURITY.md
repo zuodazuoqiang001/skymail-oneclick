@@ -16,6 +16,10 @@ skymail-oneclick is an MIT-licensed local wizard. The GitHub tree is the only of
 
 The API token stays in the browser tab / local Node process. `.skymail-state.json` is gitignored.
 
+## GitHub Actions (optional)
+
+You may store `CLOUDFLARE_API_TOKEN` as a GitHub Actions secret on **your fork** and run `.github/workflows/deploy.yml`. The token is sent only to GitHub-hosted runners and `api.cloudflare.com`. Do not put the token on someone else's repository. Public logs must not contain the token or full JWT (`--ci`).
+
 ## Reporting
 
 Open a GitHub issue. Include the commit hash you inspected.

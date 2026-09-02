@@ -135,7 +135,24 @@ Step 2 of the wizard has **Purge a deployed mailbox**: enter the site / mail dom
 node deploy.mjs --cli --token <CF_TOKEN> --zone example.com --site mail.example.com --admin admin@example.com --replace-mx
 ```
 
-With multiple accounts, add `--account <ACCOUNT_ID>`. Multiple mail domains: `--zone a.com,b.com`. Skip R2: `--no-r2`.
+With multiple accounts, add `--account <ACCOUNT_ID>`. Multiple mail domains: `--zone a.com,b.com`. Skip R2: `--no-r2`. Mask JWT in CI logs: `--ci`.
+
+## GitHub Actions (free, no local Node)
+
+This runs the same CLI pipeline on a free GitHub-hosted runner, including catch-all. It does not start the local wizard.
+
+1. **Fork this repository** (put the Token in your fork, not upstream)
+2. Settings → Secrets and variables → Actions → New repository secret
+   - Required: `CLOUDFLARE_API_TOKEN` (User API Token, same permissions as the wizard; still add Email Routing Rules by hand after the prefill link)
+   - Optional: `CLOUDFLARE_ACCOUNT_ID` if the Token can see multiple accounts
+3. Actions → **Deploy Skymail** → Run workflow
+   - `zone`: mail domain already on Cloudflare
+   - `site` / `admin` can be empty (defaults `mail.<zone>`, `admin@<zone>`)
+   - Check `replace_mx` if the domain already has MX records
+
+Public repository logs are visible. The workflow does not print the Token or the full JWT. After it finishes, register the first account on the site with the admin email.
+
+In this mode the Token lives in GitHub Secrets and is sent to Cloudflare from the runner; it is no longer local-only.
 
 ## What the pipeline does
 
